@@ -411,9 +411,8 @@ async def search_bundle(
         except Exception:
             recs = []
 
-    for title, score in recs:
-        card = await attach_tmdb_card_by_title(title)
-        tfidf_items.append(TFIDFRecItem(title=title, score=score, tmdb=card))
+    for title, score in recs[:5]:
+        tfidf_items.append(TFIDFRecItem(title=title,score=score,tmdb=None))
 
     # 2) Genre recommendations (TMDB discover by first genre)
     genre_recs: List[TMDBMovieCard] = []

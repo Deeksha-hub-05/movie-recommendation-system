@@ -2,7 +2,7 @@ import requests
 import streamlit as st
 
 # CONFIG
-API_BASE = "http://127.0.0.1:8000"
+API_BASE ="https://movie-recommendation-system-tenh.onrender.com"or "http://127.0.0.1:8000"
 TMDB_IMG = "https://image.tmdb.org/t/p/w500"
 
 st.set_page_config(page_title="Movie Recommender", page_icon="🎬", layout="wide")
@@ -119,11 +119,6 @@ def to_cards_from_tfidf_items(tfidf_items):
 
 #search
 def parse_tmdb_search_to_cards(data, keyword: str, limit: int = 24):
-    """
-    Returns:
-      suggestions: list[(label, tmdb_id)]
-      cards: list[{tmdb_id,title,poster_url}]
-    """
     keyword_l = keyword.strip().lower()
 
     if isinstance(data, dict) and "results" in data:
@@ -211,7 +206,7 @@ st.divider()
 # VIEW: HOME
 if st.session_state.view == "home":
     typed = st.text_input(
-        "Search by movie title (keyword)", placeholder="Type: avenger, batman, love..."
+        "Search by movie title", placeholder="Type: avenger, batman, love..."
     )
 
     st.divider()
@@ -227,20 +222,20 @@ if st.session_state.view == "home":
                 st.error(f"Search failed: {err}")
             else:
                 suggestions, cards = parse_tmdb_search_to_cards(
-                    data, typed.strip(), limit=24
+                    data, typed.strip(), limit=10
                 )
 
 
                 if suggestions:
-                    labels = ["-- Select a movie --"] + [s[0] for s in suggestions]
+                    labels = ["Select a movie"] + [s[0] for s in suggestions]
                     selected = st.selectbox("Suggestions", labels, index=0)
 
-                    if selected != "-- Select a movie --":
+                    if selected != "Select a movie":
 
                         label_to_id = {s[0]: s[1] for s in suggestions}
                         goto_details(label_to_id[selected])
                 else:
-                    st.info("No suggestions found. Try another keyword.")
+                    st.info("No suggestions found.")
 
                 st.markdown("### Results")
                 poster_grid(cards, cols=grid_cols, key_prefix="search_results")
@@ -251,7 +246,7 @@ if st.session_state.view == "home":
     st.markdown(f"### 🏠 Home — {home_category.replace('_',' ').title()}")
 
     home_cards, err = api_get_json(
-        "/home", params={"category": home_category, "limit": 24}
+        "/home", params={"category": home_category, "limit": 10}
     )
     if err or not home_cards:
         st.error(f"Home feed failed: {err or 'Unknown error'}")
@@ -340,7 +335,7 @@ elif st.session_state.view == "details":
                 key_prefix="details_genre",
             )
         else:
-            st.info("Showing Genre recommendations (fallback).")
+            st.info("Showing Genre recommendations.")
             genre_only, err3 = api_get_json(
                 "/recommend/genre", params={"tmdb_id": tmdb_id, "limit": 18}
             )
