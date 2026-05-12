@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 
+
 #dotenv,cors config
 load_dotenv()
 TMDB_API_KEY=os.getenv("TMDB_API_KEY")
@@ -311,7 +312,7 @@ def health():
 @app.get("/home", response_model=List[TMDBMovieCard])
 async def home(
     category: str = Query("popular"),
-    limit: int = Query(24, ge=1, le=50),
+    limit: int = Query(10, ge=1, le=10),
 ):
     try:
         if category == "trending":

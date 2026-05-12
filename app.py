@@ -246,7 +246,7 @@ if st.session_state.view == "home":
     st.markdown(f"### 🏠 Home — {home_category.replace('_',' ').title()}")
 
     home_cards, err = api_get_json(
-        "/home", params={"category": home_category, "limit": 10}
+        "/home", params={"category": home_category, "limit": 5}
     )
     if err or not home_cards:
         st.error(f"Home feed failed: {err or 'Unknown error'}")
